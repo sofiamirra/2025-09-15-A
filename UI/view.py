@@ -17,7 +17,7 @@ class View(ft.UserControl):
         # graphical elements
         self._title = None
         self._txt_name = None
-        self._txt_result = None
+        self.txt_result = None
 
     def load_interface(self):
         # title
@@ -26,6 +26,7 @@ class View(ft.UserControl):
 
         self._ddAnno1 = ft.Dropdown(label="Da", hint_text="Anno")
         self._ddAnno2 = ft.Dropdown(label="A", hint_text="Anno")
+        self._controller._fillDDYears()
         self._btnCreaGrafo = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handleCreaGrafo)
 
 
