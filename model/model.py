@@ -17,6 +17,7 @@ class Model:
         nodes = DAO.getAllNodes(y1, y2)
         self._graph.add_nodes_from(nodes)
         for d in nodes:
+            # la chiave deve sempre corrispondere all'attributo chiave primaria
             self._idMapDrivers[d.driverId] = d
         allEdges = DAO.getAllEdges(y1, y2, self._idMapDrivers)
         for e in allEdges:
@@ -33,14 +34,11 @@ class Model:
 
     def getComponentiConnesseDetails(self):
         # Conta quante "isole separate" ci sono nel grafo (A -- B -- C), (D -- F)
-        return nx.number_connected_components(self._graph)
-
-    def getComponentePiuGrande(self):
-        # Restituisce tutte le componenti, ogni componente è un insieme di nodi
-        componenti = nx.connected_components(self._graph)
+        componenti = list(nx.connected_components(self._graph)) # restituisce tutte le componenti, ogni componente è un insieme di nodi
 
         # Prende la componente con più nodi
-        componente_piu_grande = max(componenti, key=len)
-        nodi_ordinati = sorted(componente_piu_grande, key=lambda n: self._graph.degree(n), reverse=True)
-        return componente_piu_grande, nodi_ordinati
+        largest = max(componenti, key=len)
+        nodi_ordinati = sorted(largest, key=lambda n: self._graph.degree(n), reverse=True)
+
+        return len(componenti), largest, nodi_ordinati
 

@@ -32,6 +32,7 @@ class DAO():
                 WHERE r.raceId = re.raceId AND re.driverId = d.driverId  
                 AND r.year BETWEEN %s AND %s
                 AND re.position IS NOT NULL
+                ORDER BY d.driverId
                 """
 
         cursor.execute(query, (year1, year2))
@@ -49,23 +50,17 @@ class DAO():
         results = []
 
         cursor = conn.cursor(dictionary=True)
-        query = """SELECT t1.driverId as id1, t2.driverId as id2, COUNT(*) as peso
-                FROM (SELECT r.driverId, r.constructorId, r.raceId
-                    FROM results r, races ra
-                    WHERE r.raceId = ra.raceId
-                    AND r.position IS NOT NULL
-                    AND ra.year BETWEEN %s AND %s) as t1,
-                (SELECT r.driverId, r.constructorId, r.raceId
-                    FROM results r, races ra
-                    WHERE r.raceId = ra.raceId
-                    AND r.position IS NOT NULL
-                    AND ra.year BETWEEN %s AND %s) as t2
-                WHERE t1.constructorId = t2.constructorId
-                AND t1.raceId = t2.raceId             
-                AND t1.driverId > t2.driverId         
-                GROUP BY t1.driverId, t2.driverId """
+        query = """SELECT r1.driverId as id1, r2.driverId as id2, COUNT(*) as peso
+                FROM results r1, results r2, races r
+                    WHERE r.raceId = r1.raceId AND r.raceId = r2.raceId
+                    AND r1.constructorId = r2.constructorId
+                    AND r1.position IS NOT NULL
+                    AND r2.position IS NOT NULL
+                    AND r1.driverId > r2.driverId 
+                    AND r.year BETWEEN %s AND %s
+                    GROUP BY r1.driverId, r2.driverId """
 
-        cursor.execute(query, (year1, year2, year1, year2))
+        cursor.execute(query, (year1, year2))
 
         for row in cursor:
             results.append(Arco(idMapD[row["id1"]], idMapD[row["id2"]], row["peso"]))

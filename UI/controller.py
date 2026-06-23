@@ -17,12 +17,14 @@ class Controller:
         self._view.update_page()
 
     def handleCreaGrafo(self,e):
+        """Recupera gli anni dal DropDown"""
         year1 = self._view._ddAnno1.value
         year2 = self._view._ddAnno2.value
         self._model.buildGraph(year1, year2)
+        self._view.txt_result.controls.clear() # pulisco prima di stampare qualsiasi cosa
         self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato", color="red"))
+
         nNodes, nEdges = self._model.getGraphDetails()
-        self._view.txt_result.controls.clear()
         self._view.txt_result.controls.append(ft.Text(f"Numero nodi: {nNodes}"))
         self._view.txt_result.controls.append(ft.Text(f"Numero archi: {nEdges}"))
         self._view.update_page()
@@ -32,12 +34,11 @@ class Controller:
         self._view.txt_result.controls.append(ft.Text("Archi di peso maggiore: ", color="red"))
         top_archi = self._model.getTop3Archi()
         for arco in top_archi:
+            # Metodo di stampa definito in __str__ di arco
             self._view.txt_result.controls.append(ft.Text(str(arco)))
 
-        nComp = self._model.getComponentiConnesseDetails()
+        nComp,  bComp, nodes = self._model.getComponentiConnesseDetails()
         self._view.txt_result.controls.append(ft.Text(f"Il grafo ha {nComp} componenti connesse", color="red"))
-
-        bComp, nodes = self._model.getComponentePiuGrande()
         self._view.txt_result.controls.append(ft.Text(f"Componente più grande ({len(nodes)} nodi): ", color="red"))
         for node in nodes:
             self._view.txt_result.controls.append(ft.Text(f"{node.driverRef} ({node.driverId}) -- DoB: {node.dob}"))
