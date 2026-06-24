@@ -6,6 +6,7 @@ class DAO():
 
     @staticmethod
     def getAllYears():
+        """ Recupera dal database la lista di tutti gli anni presenti nelle stagioni dal piu vecchio al piu recente"""
         conn = DBConnect.get_connection()
         results = []
 
@@ -15,6 +16,7 @@ class DAO():
         cursor.execute(query)
 
         for row in cursor:
+            # estrazione del singolo campo anno senza creare un oggetto
             results.append(row["year"])
 
         cursor.close()
@@ -23,10 +25,12 @@ class DAO():
 
     @staticmethod
     def getAllNodes(year1, year2):
+        """Recupera dal database tutti i piloti che hanno partecipato alle gare nel lasso di tempo indicato senza duplicati"""
         conn = DBConnect.get_connection()
         results = []
 
         cursor = conn.cursor(dictionary=True)
+        # select usa d.* per prendere solo i campi del pilota anche se ci sono piu tabelle
         query = """SELECT DISTINCT d.*
                 FROM drivers d, races r, results re
                 WHERE r.raceId = re.raceId AND re.driverId = d.driverId  
@@ -46,6 +50,7 @@ class DAO():
 
     @staticmethod
     def getAllEdges(year1, year2, idMapD):
+        """Metodo per la creazione degli archi dal DB"""
         conn = DBConnect.get_connection()
         results = []
 
@@ -63,6 +68,7 @@ class DAO():
         cursor.execute(query, (year1, year2))
 
         for row in cursor:
+            # impacchetto i dati direttamente nell'oggetto DTO
             results.append(Arco(idMapD[row["id1"]], idMapD[row["id2"]], row["peso"]))
 
         cursor.close()

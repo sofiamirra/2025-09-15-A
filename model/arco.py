@@ -1,3 +1,4 @@
+"""Oggetto DTO per il trasporto dal DAO"""
 from dataclasses import dataclass
 from model.driver import Driver
 
@@ -9,3 +10,4 @@ class Arco:
 
     def __str__(self):
         return f"{self.d1} --> {self.d2} ({self.peso})"
+

@@ -8,16 +8,19 @@ class Controller:
         self._model = model
 
     def _fillDDYears(self):
-        years = self._model.getAllYears()
+        """Riempie i menu a tendina della vista con gli anni recuperati dal modello e aggiorna l'interfaccia grafica"""
+        years = self._model.getAllYears() # chiamata al modello per ottenere la lista di anni dal database
         yearsDD = []
-        for year in years:
+        for year in years: # ciclo per trasformare ogni anno in un elemento grafico selezionabile
             yearsDD.append(ft.dropdown.Option(year))
+        # assegnazione della lista di opzioni ai menu a tendina
         self._view._ddAnno1.options = yearsDD
         self._view._ddAnno2.options = yearsDD
         self._view.update_page()
 
     def handleCreaGrafo(self,e):
-        """Recupera gli anni dal DropDown"""
+        """"Legge i parametri scelti e crea la struttura"""
+        # lettura dei valori dai menu a tendina della vista
         year1 = self._view._ddAnno1.value
         year2 = self._view._ddAnno2.value
         self._model.buildGraph(year1, year2)
@@ -27,7 +30,7 @@ class Controller:
         nNodes, nEdges = self._model.getGraphDetails()
         self._view.txt_result.controls.append(ft.Text(f"Numero nodi: {nNodes}"))
         self._view.txt_result.controls.append(ft.Text(f"Numero archi: {nEdges}"))
-        self._view.update_page()
+        self._view.update_page() # rendering dei cambiamenti
 
     def handleDettagli(self, e):
         self._view.txt_result.controls.clear() # pulisco prima di stampare qualsiasi cosa

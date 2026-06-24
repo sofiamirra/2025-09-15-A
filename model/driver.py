@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass
 
 @dataclass
@@ -8,7 +9,7 @@ class Driver:
     code: str
     forename: str
     surname: str
-    dob: str
+    dob: datetime.date
     nationality: str
     url: str
 
@@ -20,3 +21,4 @@ class Driver:
 
     def __str__(self):
         return self.driverRef
+
