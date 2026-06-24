@@ -53,5 +53,47 @@ class Controller:
         self._view.update_page()
 
     def handleCerca(self, e):
-        pass
+        self._view.txt_result.controls.clear()
+        k = self._view._txtInK.value # prendo il valore dal campo di testo
+
+        # Validazione con return
+        if k is None or k == "":
+            self._view.txt_result.controls.append(ft.Text("Attenzione! Inserire un valore intero!", color="red"))
+            self._view.update_page()
+            return
+
+        try:
+            kInt = int(k)
+        except ValueError:
+            self._view.txt_result.controls.append(ft.Text("Attenzione! Inserire un valore intero!", color="red"))
+            self._view.update_page()
+            return
+
+        listaPilotiOttima, minDistEta = self._model.getListaPilotiOttima(kInt)
+
+        if listaPilotiOttima is None:
+            self._view.txt_result.controls.append(ft.Text(
+                f"Non ci sono abbastanza componenti connesse per trovare {kInt} piloti "
+                f"che NON siano stati compagni di squadra nel range selezionato", color="red"))
+            self._view.update_page()
+            return
+
+            # 5. Stampa in caso di successo
+        self._view.txt_result.controls.append(
+            ft.Text("Lista di piloti con scarto di età minimo (mai stati compagni di squadra):", color="green"))
+
+        # Ciclo pulito senza return interno
+        for p in listaPilotiOttima:
+            self._view.txt_result.controls.append(ft.Text(str(p)))
+
+        # Trovo min e max (usando la funzione lambda sulla data di nascita)
+        youngest = min(listaPilotiOttima, key=lambda x: x.dob)
+        oldest = max(listaPilotiOttima, key=lambda x: x.dob)
+        self._view.txt_result.controls.append(
+            ft.Text(f"Differenza di età tra pilota più giovane e pilota più anziano: {minDistEta}"))
+        self._view.txt_result.controls.append(ft.Text(f"Pilota più giovane: {youngest}"))
+        self._view.txt_result.controls.append(ft.Text(f"Pilota più anziano: {oldest}"))
+        self._view.update_page()
+
+
 
